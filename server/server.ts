@@ -32,6 +32,7 @@ io.on('connect', (socket) => {
         io.emit('updatePlayers', Object.values(players));
     });
 
+
     // Player disconnects
     socket.on('disconnect', () => {
         let player = Object.values(players).find(player => player.id === socket.id);
@@ -45,11 +46,19 @@ io.on('connect', (socket) => {
         io.emit('updatePlayers', Object.values(players));
     });
 
+
     // Provide current list players to the new player
     socket.on('getPlayers', () => {
         socket.emit('updatePlayers', Object.values(players));
         console.log(`User ${socket.id} requested players.`);
     });
+
+    // Listen for host starting the game
+    socket.on('startGame', () => {
+        // Emit 'gameStart' event to all connected clients
+        io.emit('gameStart');
+    });
+
 
     // Listen for player submitting their prompt's text
     socket.on('submitPrompt', (publicKey, promptText) => {
