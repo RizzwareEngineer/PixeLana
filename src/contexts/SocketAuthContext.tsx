@@ -48,6 +48,11 @@ export const SocketAuthProvider: FC<{ children: ReactNode }> = ({ children }) =>
         // newSocket.emit("authenticate", { publicKey: wallet.publicKey.toString() });
       });
 
+      // Error with adding a player
+      newSocket.on("addPlayerError", (message) => {
+        console.error(message);
+      });
+
       setSocket(newSocket);
       return newSocket;
     } else {
