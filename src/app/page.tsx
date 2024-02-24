@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 'use client'
 
-=======
 import NavBar from "@/components/navBar";
->>>>>>> 76cfaa8 (feat(ui): wallet works)
 import Image from "next/image";
 import { useEffect } from "react";
 import io from "socket.io-client";
