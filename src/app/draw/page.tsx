@@ -109,7 +109,7 @@ export default function Game() {
   <NavBar />
   <div className="flex flex-col items-center justify-center w-full z-10 " style={{ height: 'calc(100% - 74px)' }}>
     <div className="flex flex-col items-center justify-center min-h-[80%] min-w-[80%] w-[80%] h-[80%] bg-[#370C59] rounded-lg p-5 space-y-3 border-[3px] border-gray-200">
-      <h1 className="font-customs text-[50px] text-shadow-custom text-[#8dfcbc]">cook your story</h1>
+      <h1 className="font-customs text-[50px] text-shadow-custom text-[#8dfcbc]">Cook Your Story</h1>
       {!isImage && <h1 className="text-shadow-md text-xl text-yellow-300">Prompt: {receivedContent!}</h1>}
       {/* Ensure Image component fills the container or consider a wrapper */}
       <div className="border-[5px] border-black rounded-xl w-[500px] h-[500px]">
