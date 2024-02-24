@@ -11,22 +11,27 @@ const io = new Server(httpServer, {
     }
 });
 
-let players: Record<string, Player> = {};
+let players: Record<string, Player> = {}; // publicKey: Player
 let startingPrompts: Prompt[] = [];
 
 // Player connects
 io.on('connect', (socket) => {
     
     // Add player to memory
-    socket.on('addPlayer', (name, publicKey) => {
-        let player = { id: socket.id, name, publicKey };
-        players[socket.id] = player;
+    socket.on('addPlayer', (name, avatar, publicKey) => {
+        if (players[publicKey]) {
+            socket.emit('addPlayerError', `Public key ${publicKey} is already in use.`);
+            return;
+        }
+
+        let player = { id: socket.id, name, avatar, publicKey };
+        players[publicKey] = player;
         
         console.log(`User ${socket.id} connected. Total players: ${Object.keys(players).length}`);
       });
 
     
-    // Player disconnects
+    // Player disconnects; refactor this later
     socket.on('disconnect', () => {
         let player = players[socket.id];
         if (!player) {
@@ -34,7 +39,7 @@ io.on('connect', (socket) => {
             return;
         }
 
-        delete players[socket.id];
+        delete players[player.publicKey];
         console.log(`User ${socket.id} disconnected. Total players: ${Object.keys(players).length - 1}`);
     });
 });
