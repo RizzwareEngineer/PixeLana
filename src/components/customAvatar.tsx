@@ -1,3 +1,4 @@
+'use client';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 // import { avatars } from "@/lib/avatars"
 import {SvgIcon} from "@/components/customSvg"
@@ -5,6 +6,8 @@ import { Button } from "./ui/button";
 import { useState } from "react";
 import { useSocketAuth } from "@/contexts/SocketAuthContext";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const avatars = ['chalk-outline-murder.png', 'gibbet.png', 'life-in-the-balance.png', 'pierced-heart.png', 'haunting.png', 'skeletal-hand.png', 'sarcophagus.png', 'spectre.png', 'slipknot.png', 'shambling-zombie.png', 'oni.png', 'death-zone.png', 'telefrag.png', 'half-dead.png', 'morgue-feet.png', 'decapitation.png', 'dead-head.png', 'anubis.png', 'ghost.png', 'scythe.png', 'graveyard.png', 'reaper-scythe.png', 'drowning.png', 'internal-injury.png', 'prayer.png', 'dead-eye.png', 'resting-vampire.png', 'guillotine.png', 'tombstone.png', 'dead-wood.png', 'pirate-grave.png', 'imprisoned.png', 'suicide.png', 'coffin.png', 'carrion.png', 'egyptian-urns.png', 'grave-flowers.png', 'grim-reaper.png', 'executioner-hood.png', 'maggot.png']
 
@@ -12,6 +15,7 @@ const genRandomName = () => { let randomName = ''; const characters = 'ABCDEFGHI
 
 
 export function AvatarPicker() {
+  const router = useRouter();
   const {connectSocket} = useSocketAuth();
   const wallet = useWallet()
   const leftPath = "M168 48v160a8 8 0 0 1-13.66 5.66l-80-80a8 8 0 0 1 0-11.32l80-80A8 8 0 0 1 168 48"
@@ -39,8 +43,10 @@ export function AvatarPicker() {
     //TODO: emit the avtar and name to the sever 
     // name=name, url of avatar is "/avatars/${avatars[chosenIndex]}"
     const socket = connectSocket();
-    socket!.emit('addPlayer', {name: name, avatar: `/avatars/$avatars[chosenIndex]`, pubKey: wallet.publicKey?.toBase58()});
-    // socket?.emit('join-room', {roomId: "1", userId: "1", name: name, avatar: avatars[chosenIndex], isHost: true});
+    if (socket) {
+      socket!.emit('addPlayer', {name: name, avatar: `/avatars/$avatars[chosenIndex]`, pubKey: wallet.publicKey?.toBase58()});
+      router.push('/waiting');
+    }
   }
 
   return (

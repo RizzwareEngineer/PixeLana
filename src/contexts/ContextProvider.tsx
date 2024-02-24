@@ -4,7 +4,7 @@ import {
   ConnectionProvider,
   WalletProvider,
 } from "@solana/wallet-adapter-react";
-import { PhantomWalletAdapter, BitpieWalletAdapter} from "@solana/wallet-adapter-wallets";
+import { PhantomWalletAdapter, BitpieWalletAdapter, SolflareWalletAdapter} from "@solana/wallet-adapter-wallets";
 import { Cluster, clusterApiUrl } from "@solana/web3.js";
 import { FC, ReactNode, useCallback, useMemo } from "react";
 import { AutoConnectProvider, useAutoConnect } from "./AutoConnectProvider";
@@ -29,7 +29,7 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   console.log(network);
 
-  const wallets = useMemo(() => [new PhantomWalletAdapter()], [network]);
+  const wallets = useMemo(() => [new PhantomWalletAdapter(), new SolflareWalletAdapter()], [network]);
 
   const onError = useCallback((error: WalletError) => {
     toast.error(error.message ? `${error.name}: ${error.message}` : error.name);

@@ -3,6 +3,7 @@ import Image from "next/image";
 import "./globals.css";
 import { Web3ContextProvider } from "@/contexts/ContextProvider";
 import { SocketAuthProvider } from "@/contexts/SocketAuthContext";
+import { Toaster } from "sonner";
 
 // const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
         <Web3ContextProvider>
           <SocketAuthProvider>
           {children}
+          <Toaster />
           </SocketAuthProvider>
         </Web3ContextProvider>
       </body>
