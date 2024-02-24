@@ -17,7 +17,7 @@ let startingPrompts: Prompt[] = [];
 
 // Player connects
 io.on('connect', (socket) => {
-    // Add player to memory
+    // Add player to memory when they connect to lobby
     socket.on('addPlayer', (name, avatar, isHost, publicKey) => {
         if (players[publicKey]) {
             socket.emit('addPlayerError', `Public key ${publicKey} is already in use.`);
@@ -28,7 +28,7 @@ io.on('connect', (socket) => {
         players[publicKey] = player;
         order++;
         
-        console.log(`User ${socket.id} connected. Total players: ${Object.keys(players).length}`);
+        console.log(`User ${socket.id} connected. Total players: ${Object.keys(players).length}, Order: ${order}`);
         io.emit('updatePlayers', Object.values(players));
     });
 
