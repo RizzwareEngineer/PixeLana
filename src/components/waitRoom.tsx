@@ -7,6 +7,7 @@ export interface User {
   name: string;
   avatar: string;
   isHost: boolean;
+  publicKey: string;
 }
 
 interface RoomProps {

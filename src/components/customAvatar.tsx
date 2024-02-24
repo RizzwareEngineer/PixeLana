@@ -44,7 +44,7 @@ export function AvatarPicker() {
     // name=name, url of avatar is "/avatars/${avatars[chosenIndex]}"
     const socket = connectSocket();
     if (socket) {
-      socket!.emit('addPlayer', {name: name, avatar: `/avatars/$avatars[chosenIndex]`, pubKey: wallet.publicKey?.toBase58()});
+      socket.emit('addPlayer', name, `/avatars/${avatars[chosenIndex]}`, true, wallet.publicKey?.toBase58());
       router.push('/waiting');
     }
   }
