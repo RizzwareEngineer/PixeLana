@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node server.ts",
+    "dev": "ts-node server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "socket.io": "^4.7.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.20",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
