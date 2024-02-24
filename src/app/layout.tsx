@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import Image from "next/image";
 import "./globals.css";
 import { Web3ContextProvider } from "@/contexts/ContextProvider";
 import { SocketAuthProvider } from "@/contexts/SocketAuthContext";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,7 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className="bg-gradient-to-b from-pink-500 to-purple-500">
+        <Image src={"/textura-background.png"} className="" alt="bg-img" layout="fill"
+        objectFit="cover" // This makes the image cover the available space
+        quality={100}/>
         <Web3ContextProvider>
           <SocketAuthProvider>
           {children}
