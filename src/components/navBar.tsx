@@ -8,13 +8,15 @@ import dynamic from "next/dynamic";
 import {WalletMultiButton} from "@solana/wallet-adapter-react-ui";
 import '@solana/wallet-adapter-react-ui/styles.css';
 import './wallet.css'
+import { useRouter } from "next/navigation";
 
 const buttonStyles = "rounded-xl italic border-dashed border-[5px] border-black hover:bg-[#f7d726] "
 
 export default function NavBar() {
+  const router = useRouter();
   return (
     <div className="absolute top-0 w-full h-80px flex items-center justify-between px-5 py-3">
-      <div>logo</div>
+      <div onClick={() => router.push("/")}>logo</div>
       <div className="inline-flex items-center justify-center gap-5">
       <WalletMultiButton className="wallet-button mr-6 font-sans" >
       </WalletMultiButton>
