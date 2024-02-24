@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Web3ContextProvider } from "@/contexts/ContextProvider";
+import { SocketAuthProvider } from "@/contexts/SocketAuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +18,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <Web3ContextProvider>
+          {/* <SocketAuthProvider> */}
+          {children}
+          {/* </SocketAuthProvider> */}
+        </Web3ContextProvider>
+      </body>
     </html>
   );
 }
