@@ -39,9 +39,8 @@ export function AvatarPicker() {
     }
   }
 
+  // Player connects to server/socket and waits for other players to join
   const onStart = () => {
-    //TODO: emit the avtar and name to the sever 
-    // name=name, url of avatar is "/avatars/${avatars[chosenIndex]}"
     const socket = connectSocket();
     if (socket) {
       socket.emit('addPlayer', name, `/avatars/${avatars[chosenIndex]}`, true, wallet.publicKey?.toBase58());
