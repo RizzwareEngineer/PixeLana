@@ -43,8 +43,9 @@ export default function Game() {
 
   useEffect(() => {
     if (socket) {
-      //TODO: fill this out
-      socket.on('', () => {
+      // Redirect users to the next page when 
+      // all players have submitted their prompts or when the time has run out
+      socket.on('gameDraw', () => {
         router.push('/game');
       })
     }
