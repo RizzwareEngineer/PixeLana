@@ -12,34 +12,27 @@ const io = new Server(httpServer, {
 });
 
 let players: Record<string, Player> = {}; // publicKey: Player
+let order = 0; // Keep track of the number of players
 let startingPrompts: Prompt[] = [];
 
 // Player connects
 io.on('connect', (socket) => {
-    
-    // Add player to memory
+    // Add player to memory when they connect to lobby
     socket.on('addPlayer', (name, avatar, isHost, publicKey) => {
         if (players[publicKey]) {
-        socket.emit('addPlayerError', `Public key ${publicKey} is already in use.`);
-        return;
+            socket.emit('addPlayerError', `Public key ${publicKey} is already in use.`);
+            return;
         }
-    
-        let player = { id: socket.id, name, avatar, isHost, publicKey };
-        players[publicKey] = player;
         
-        console.log(`User ${socket.id} connected. Total players: ${Object.keys(players).length}`);
+        let player = { id: socket.id, name, avatar, isHost, order, publicKey };
+        players[publicKey] = player;
+        order++;
+        
+        console.log(`User ${socket.id} connected. Total players: ${Object.keys(players).length}, Order: ${order}`);
         io.emit('updatePlayers', Object.values(players));
     });
-    
-    // Provide current list players to the new player
-    socket.on('getPlayers', () => {
-        socket.emit('updatePlayers', Object.values(players));
-        console.log(`User ${socket.id} requested players.`);
-    });
 
-
-    
-    // Player disconnects; refactor this later as it needs to delete the player from memory
+    // Player disconnects
     socket.on('disconnect', () => {
         let player = Object.values(players).find(player => player.id === socket.id);
         if (!player) {
@@ -51,6 +44,19 @@ io.on('connect', (socket) => {
         console.log(`User ${socket.id} disconnected. Total players: ${Object.keys(players).length}`);
         io.emit('updatePlayers', Object.values(players));
     });
+
+    // Provide current list players to the new player
+    socket.on('getPlayers', () => {
+        socket.emit('updatePlayers', Object.values(players));
+        console.log(`User ${socket.id} requested players.`);
+    });
+
+    // Listen for player submitting a prompt
+    socket.on('submitPrompt', (prompt, publicKey) => {
+        startingPrompts.push({ player: publicKey, text: prompt });
+    
+        console.log(`Prompt received from player ${publicKey}: ${prompt}`);
+    });    
 });
 
 const PORT = process.env.PORT || 3001;
