@@ -3,6 +3,10 @@ import { createServer } from 'http';
 
 const httpServer = createServer();
 const io = new SocketIOServer(httpServer, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST']
+    }
 });
 
 let numberPlayers: number = 0; 
