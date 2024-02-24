@@ -28,22 +28,24 @@ export const SocketAuthProvider: FC<{ children: ReactNode }> = ({
   const [socket, setSocket] = useState<Socket | null>(null);
   const wallet = useWallet();
 
-  if (!process.env.NEXT_PUBLIC_SOCKET_URL) {
-    throw new Error("NEXT_PUBLIC_SOCKET_URL is not set");
-  }
+  // if (!process.env.NEXT_PUBLIC_SOCKET_URL) {
+  //   throw new Error("NEXT_PUBLIC_SOCKET_URL is not set");
+  // }
 
   useEffect(() => {
     if (wallet.connected) {
+      // console.log("Wallet connected", wallet.publicKey?.toBase58())
       // Initialize WebSocket connection after wallet connection
-      const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL!, {
+      const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL! || "http://localhost:3001" , {
         autoConnect: true, // Adjust based on your needs
       });
 
-      newSocket.on("connect", () => {
+      newSocket.on("connection", () => {
+        console.log("Connected to Socket.IO server", newSocket.id);
         // Authenticate with the server using the wallet's public address
-        newSocket.emit("authenticate", {
-          publicKey: wallet.publicKey!.toString(),
-        });
+        // newSocket.emit("authenticate", {
+        //   publicKey: wallet.publicKey!.toString(),
+        // });
       });
 
       setSocket(newSocket);

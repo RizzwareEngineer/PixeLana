@@ -42,7 +42,7 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       <WalletProvider
         wallets={wallets}
         onError={onError}
-        autoConnect={autoConnect}
+        autoConnect={false}
       >
         <ReactUIWalletModalProviderDynamic>
           {children}

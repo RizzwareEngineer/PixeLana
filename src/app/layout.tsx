@@ -20,9 +20,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Web3ContextProvider>
-          {/* <SocketAuthProvider> */}
+          <SocketAuthProvider>
           {children}
-          {/* </SocketAuthProvider> */}
+          </SocketAuthProvider>
         </Web3ContextProvider>
       </body>
     </html>
