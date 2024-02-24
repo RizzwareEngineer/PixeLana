@@ -14,6 +14,7 @@ const io = new Server(httpServer, {
 let players: Record<string, Player> = {}; // publicKey: Player
 let order = 0; // Keep track of the number of players
 let startingPrompts: Prompt[] = [];
+let gameStarted = false;
 
 // Player connects
 io.on('connect', (socket) => {
@@ -53,21 +54,44 @@ io.on('connect', (socket) => {
         console.log(`User ${socket.id} requested players.`);
     });
 
+    
     // Listen for host starting the game
     socket.on('startGame', () => {
-        // Emit 'gameStart' event to all connected clients
+        gameStarted = true;
         io.emit('gameStart');
-    });
 
+        // Start a timer for 60 seconds
+        setTimeout(() => {
+            // If not all players have submitted their prompts when the timer runs out,
+            // submit an empty prompt for them and move on to the next stage of the game
+            if (startingPrompts.length !== Object.keys(players).length) {
+                for (let publicKey in players) {
+                    if (!startingPrompts.find(prompt => prompt.player.publicKey === publicKey)) {
+                        let prompt: Prompt = { player: players[publicKey], text: '' };
+                        startingPrompts.push(prompt);
+                    }
+                }
 
+                io.emit('gameDraw');
+            }
+        }, 60000); // 60 seconds
+    });  
+
+    
     // Listen for player submitting their prompt's text
     socket.on('submitPrompt', (publicKey, promptText) => {
         let player = players[publicKey];
         let prompt: Prompt = { player, text: promptText };
         startingPrompts.push(prompt);
     
-        console.log(`Prompt: ${prompt}`);
-    });    
+        console.log(`User ${socket.id} submitted prompt: ${promptText}`);
+
+        // Check if all players have submitted their prompts
+        if (startingPrompts.length === Object.keys(players).length) {
+            // Move onto drawing the prompts
+            io.emit('gameDraw');
+        }
+    });
 });
 
 const PORT = process.env.PORT || 3001;
