@@ -37,13 +37,13 @@ export default function Game() {
   const router = useRouter();
 
   const submitStory = (prompt: string) => {
-    // socket?.emit('story', socket.id, story);
     socket?.emit('submitPrompt', wallet.publicKey?.toBase58(), prompt);
     setSubmitted(true);
   }
 
   useEffect(() => {
     if (socket) {
+      //TODO: fill this out
       socket.on('', () => {
         router.push('/game');
       })
@@ -74,15 +74,6 @@ export default function Game() {
   // has the user submitted their content
   const [submitted, setSubmitted] = useState(false);
   // duration of the round
-
-  useEffect(() => { 
-    if(socket) {
-      socket.on("", () => {
-        router.push("/game")
-      })
-    }
-  }, [socket])
-
 
 
   return (
