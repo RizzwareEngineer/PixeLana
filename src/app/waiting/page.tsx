@@ -18,14 +18,21 @@ export default function WaitRoom() {
       redirect("/")
     }
     if (socket) {
-      // TODO: probably 3 events: 1. new-user-join 2. user-leave 3. emit all existing users to new user
-      socket.on('', (data) => {});
-    // socket.emit('join-room', {roomId: "1", userId: "1", name: "test", avatar: "test", isHost: true})
+      socket.emit('getPlayers'); // Request the list of players
+  
+      socket.on('updatePlayers', (players) => {
+        console.log("players", players); 
+        setUsers(players);
+      });
     }
+    return () => {
+      if (socket) {
+        socket.off('updatePlayers');
+      }
+    };
   }, [socket])
 
   // const isHost = useMemo(() => users.filter((user) => user.isHost)[0].id === socketId, [])
-
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
