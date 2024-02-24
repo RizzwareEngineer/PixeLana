@@ -24,7 +24,7 @@ export const SvgIcon: React.FC<SvgIconProps> = ({
     className={className}
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path d={pathData} {...pathClass}/>
+    <path d={pathData} {...pathClass} fill="black"/>
   </svg>
 );
 
