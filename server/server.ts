@@ -51,11 +51,13 @@ io.on('connect', (socket) => {
         console.log(`User ${socket.id} requested players.`);
     });
 
-    // Listen for player submitting a prompt
-    socket.on('submitPrompt', (prompt, publicKey) => {
-        startingPrompts.push({ player: publicKey, text: prompt });
+    // Listen for player submitting their prompt's text
+    socket.on('submitPrompt', (publicKey, promptText) => {
+        let player = players[publicKey];
+        let prompt: Prompt = { player, text: promptText };
+        startingPrompts.push(prompt);
     
-        console.log(`Prompt received from player ${publicKey}: ${prompt}`);
+        console.log(`Prompt: ${prompt}`);
     });    
 });
 
