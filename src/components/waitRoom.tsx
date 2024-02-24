@@ -1,4 +1,5 @@
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import { Button } from "./ui/button";
 
 
 export interface User {
@@ -25,7 +26,6 @@ export function UserCard({ user }: { user: User }) {
 
 
 export function Room({ users }: RoomProps) {
-  
   
   return (
     <div className="flex flex-col items-center justify-center w-full">
