@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useWallet } from "@solana/wallet-adapter-react";
 
+
+
 function FinishDialog({open}: {open: boolean}) {
   return (
   <Dialog open={open}>
@@ -82,25 +84,40 @@ export default function Game() {
     }
   }, [socket])
 
+
+  async function query(prompt: string) {
+    console.log(process.env.NEXT_SDXL_API_KEY)
+    const response = await fetch(
+      "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
+      {
+        headers: { Authorization: process.env.NEXT_SDXL_API_KEY || "" },
+        method: "POST",
+        body: JSON.stringify({ inputs: prompt }),
+      }
+    );
+    const result = await response.blob();
+    return result;
+  }
+
   const generate = async () => {
     setGenerating(true);
-    const aiImage = await fetch('https://api.deepai.org/api/text2img', {})
-    .then(response => response.json())
+    const blob = await query(aiPrompt);
+    const url = URL.createObjectURL(blob);
     setGenerating(false);
-    setAiImage(aiImage);
+    setAiImage(url);
   }
 
 
   return (
 <main className="flex min-h-screen flex-col items-center justify-center p-24">
   <NavBar />
-  <div className="flex flex-col items-center justify-center w-full z-10 " style={{ height: 'calc(100% - 74px)' }}>
+   <div className="flex flex-col items-center justify-center w-full z-10 " style={{ height: 'calc(100% - 74px)' }}>
     <div className="flex flex-col items-center justify-center min-h-[80%] min-w-[80%] w-[80%] h-[80%] bg-[#370C59] rounded-lg p-5 space-y-3 border-[3px] border-gray-200">
-      <h1 className="font-customs text-[50px] text-shadow-custom text-[#8dfcbc]">Make Store Come True</h1>
+      <h1 className="font-sans font-customs text-[50px] text-shadow-custom text-[#8dfcbc]">Make Store Come True</h1>
       <h1 className="text-shadow-md text-xl text-yellow-300">Prompt: {receivedPrompt!}</h1>
       {/* Ensure Image component fills the container or consider a wrapper */}
       <div className="border-[5px] border-black rounded-xl w-[500px] h-[500px]">
-        { aiImage ? (<Image src={aiImage} alt="image" className="w-full h-full object-contain" />) :
+        { aiImage ? (<Image src={aiImage} alt="image" width={500} height={500} className="w-full h-full object-contain" />) :
         (<div className="text-white items-center justify-center w-full h-full flex">Input your Prompt to Generate Image</div>)}
       </div>
       <h1 className={cn("text-shadow-md text-xl text-white", timeLeft < 20 && "text-yellow-300")}>Time Remaining: {timeLeft}</h1>
@@ -115,3 +132,5 @@ export default function Game() {
 </main>
   )
 }
+
+// 500 x 500 

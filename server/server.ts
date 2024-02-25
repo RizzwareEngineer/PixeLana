@@ -12,6 +12,7 @@ const io = new Server(httpServer, {
 });
 
 let players: Record<string, Player> = {}; // publicKey: Player
+let socketIdToPublicKey: Record<string, string> = {}; // socketId: publicKey
 let prompt: string; // Prompt from host/judge to be drawn
 let images: Record<string, string> = {}; // Images submitted by players
 let gameStarted = false;
@@ -27,6 +28,7 @@ io.on('connect', (socket) => {
         const isHost = Object.keys(players).length == 0; 
         let player = { socketId: socket.id, name, avatar, isHost, publicKey };
         players[publicKey] = player;
+        socketIdToPublicKey[socket.id] = publicKey;
         
         console.log(`User ${socket.id} connected. Total players: ${Object.keys(players).length}`);
         io.emit('updatePlayers', Object.values(players));
@@ -35,7 +37,7 @@ io.on('connect', (socket) => {
 
     // Player disconnects
     socket.on('disconnect', () => {
-        let player = Object.values(players).find(player => player.socketId === socket.id);
+        let player = players[socketIdToPublicKey[socket.id]];
         if (!player) {
             console.log(`User ${socket.id} not found.`);
             return;
@@ -43,6 +45,7 @@ io.on('connect', (socket) => {
 
         delete players[player.publicKey];
         console.log(`User ${socket.id} disconnected. Total players: ${Object.keys(players).length}`);
+        console.log(players);
         io.emit('updatePlayers', Object.values(players));
     });
 
