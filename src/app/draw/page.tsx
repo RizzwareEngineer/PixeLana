@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { revalidatePath } from "next/cache";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 function FinishDialog({open}: {open: boolean}) {
   return (
@@ -33,6 +34,7 @@ export default function Game() {
 
   const router = useRouter();
   const {socket} = useSocketAuth();
+  const wallet = useWallet();
   // received content, either image or story
   const [receivedPrompt, setPrompt] = useState<string | null>(null);
   const [aiPrompt, setAIPrompt] = useState<string>("");
@@ -45,9 +47,8 @@ export default function Game() {
   // duration of the round
   const [timeLeft, setTimeLeft] = useState(60); 
 
-
   const submitImage = (image: string) => {
-    socket?.emit('submitDraw', socket.id, image);
+    socket?.emit('submitDraw',  wallet.publicKey?.toBase58(), image);
     setSubmitted(true);
   }
 

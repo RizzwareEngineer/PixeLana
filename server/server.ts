@@ -74,17 +74,17 @@ io.on('connect', (socket) => {
         console.log(`User ${socket.id} submitted prompt: ${promptText}`);
     });
     
-    socket.on('submitDraw', (socketId, image) => {
-        images[socketId] = image;
-        console.log(`User ${socket.id} submitted image: ${image}`);
+    socket.on('submitDraw', (publicKey, image) => {
+        images[publicKey] = image;
+        console.log(`User ${publicKey} submitted image: ${image}`);
         if (Object.keys(images).length === Object.keys(players).length - 1) {
             io.emit('allImagesSubmitted');
         }
     })
 
     socket.on('getAllContent', () => {
-        const allContent = [{type: "story", data: prompt, user: players[Object.keys(players)[0]]}, ...Object.entries(images).map(([socketId, image]) => {
-            return {type: "image", data: image, user: players[socketId]}
+        const allContent = [{type: "story", data: prompt, user: players[Object.keys(players)[0]]}, ...Object.entries(images).map(([publicKey, image]) => {
+            return {type: "image", data: image, user: players[publicKey]}
         })];
         io.emit('allContent', allContent);
     })
