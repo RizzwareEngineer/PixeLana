@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { createServer } from 'http';
 import { Player } from './models/player';
+import mint from './mint';
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
@@ -88,8 +89,13 @@ io.on('connect', (socket) => {
         io.emit('allContent', allContent);
     })
 
-    socket.on('like', (playerId) => {
-        
+    socket.on('like', (publicKey, playerId) => {
+        const best = images[playerId];
+        const data = {
+            image: best,
+        }
+        const exploreUrl = mint(publicKey, data)
+        socket.emit('bestImage', playerId, exploreUrl);
         console.log(`User ${socket.id} liked ${playerId}`);
     })
 });

@@ -59,8 +59,8 @@ export default function EngPage() {
     },
   ]);
 
-  const onLike = (idx: string) => {
-    socket?.emit("like", idx);
+  const onLike = (publicKey: string, playerId: string, ) => {
+    socket?.emit("like", publicKey, playerId);
     setSubmitted(true);
   }
 
@@ -71,9 +71,10 @@ export default function EngPage() {
         setContent(content);
       })
 
-      socket.on('bestImage', (playerId: string) => {
-        toast.success(' The best image come from: ' + playerId);
+      socket.on('bestImage', (playerId: string, exploreUrl) => {
+        toast.success(' The best image come from: ' + playerId + ' and the url is: ' + exploreUrl);
       })
+
     }
 
   }, [socket])
@@ -105,7 +106,7 @@ export default function EngPage() {
                   </Avatar>
                   <div>{c.user.name}</div>
                 </div>
-                <div className="items-center justify-center disabled:opacity-50" onClick={() => onLike(c.user.socketId)}>
+                <div className="items-center justify-center disabled:opacity-50" onClick={() => onLike(c.user.socketId, c.user.publicKey)}>
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height={30} width={30}><defs><filter id="shadow-1" height="300%" width="300%" x="-100%" y="-100%"><feFlood flood-color="rgba(10, 251, 251, 1)" result="flood"/><feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"/><feGaussianBlur in="composite" stdDeviation="15" result="blur"/><feOffset dx="0" dy="0" result="offset"/><feComposite in="SourceGraphic" in2="offset" operator="over"/></filter></defs><g transform="translate(0,0)"><path d="M480.25 156.355c0 161.24-224.25 324.43-224.25 324.43S31.75 317.595 31.75 156.355c0-91.41 70.63-125.13 107.77-125.13 77.65 0 116.48 65.72 116.48 65.72s38.83-65.73 116.48-65.73c37.14.01 107.77 33.72 107.77 125.14z" fill="#f9352a" stroke="#19191a" stroke-opacity="1" stroke-width="43" fill-opacity="1" filter="url(#shadow-1)"/></g></svg>
                 </div>
               </div>
