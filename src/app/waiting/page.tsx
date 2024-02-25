@@ -79,7 +79,7 @@ export default function WaitRoom() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <NavBar />
-      <div className="flex flex-col h-[698px] w-full items-center justify-between z-10">
+      <div className="flex flex-col h-[500px] max-w-[830px] w-full items-center justify-between z-10">
         <Room users={users}/> 
         <Button className="w-[500px] h-[100px] rounded-xl italic ring-8 ring-orange-600 ring-offset-3 ring-offset-black hover:bg-[#f7d726] text-[64px] flex items-center justify-center " disabled={!buttonEnabled} onClick={onStart}>
       <div className="rounded-full overflow-hidden mr-1" >
