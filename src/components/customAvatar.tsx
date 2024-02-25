@@ -9,7 +9,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-const avatars = ['chalk-outline-murder.png', 'gibbet.png', 'life-in-the-balance.png', 'pierced-heart.png', 'haunting.png', 'skeletal-hand.png', 'sarcophagus.png', 'spectre.png', 'slipknot.png', 'shambling-zombie.png', 'oni.png', 'death-zone.png', 'telefrag.png', 'half-dead.png', 'morgue-feet.png', 'decapitation.png', 'dead-head.png', 'anubis.png', 'ghost.png', 'scythe.png', 'graveyard.png', 'reaper-scythe.png', 'drowning.png', 'internal-injury.png', 'prayer.png', 'dead-eye.png', 'resting-vampire.png', 'guillotine.png', 'tombstone.png', 'dead-wood.png', 'pirate-grave.png', 'imprisoned.png', 'suicide.png', 'coffin.png', 'carrion.png', 'egyptian-urns.png', 'grave-flowers.png', 'grim-reaper.png', 'executioner-hood.png', 'maggot.png']
+const avatars = ['life-in-the-balance.png', 'pierced-heart.png', 'haunting.png', 'skeletal-hand.png', 'sarcophagus.png', 'spectre.png', 'slipknot.png', 'shambling-zombie.png', 'oni.png', 'telefrag.png',  'morgue-feet.png', 'decapitation.png', 'dead-head.png', 'anubis.png', 'ghost.png', 'scythe.png', 'graveyard.png', 'reaper-scythe.png', 'drowning.png', 'internal-injury.png', 'prayer.png', 'dead-eye.png', 'resting-vampire.png', 'guillotine.png', 'tombstone.png', 'dead-wood.png', 'pirate-grave.png', 'coffin.png', 'carrion.png', 'egyptian-urns.png', 'grave-flowers.png', 'grim-reaper.png', 'executioner-hood.png', 'maggot.png']
 
 const genRandomName = () => { let randomName = ''; const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; for (let i = 0; i < 6; i++) { const randomIndex = Math.floor(Math.random() * characters.length); randomName += characters[randomIndex]; } return randomName; }
 
@@ -50,7 +50,7 @@ export function AvatarPicker() {
 
   return (
     <div className="flex flex-col items-center justify-center h-full space-y-10">
-    <h1 className="font-customs text-[50px] text-shadow-custom text-[#8DFCBC]">Diffuser Phone</h1>
+    <h1 className="font-customs text-[50px] text-shadow-custom text-[#8DFCBC]">PixeLana</h1>
     <div className="flex items-center justify-center w-full ">
       <Button className="bg-transparent border-none ring-none transition ease-in-out hover:-translate-y-1 hover:scale-110" onClick={prev}>
       {/* <SvgIcon pathData={leftPath} width={size} height={size} viewBox = {`0 0 ${size} ${size}`}/> */}

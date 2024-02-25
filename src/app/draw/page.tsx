@@ -36,7 +36,6 @@ const inputStyle ="flex-1 border ring-orange-600 ring-[5px] rounded-lg focus-vis
 export default function Game() {
 
   const router = useRouter();
-  noStore();
   const {socket} = useSocketAuth();
   const wallet = useWallet();
   // received content, either image or story
@@ -81,6 +80,7 @@ export default function Game() {
       });
 
       socket.on('allImagesSubmitted', () => {
+        setSubmitted(false);
         router.push('/end');
       })
     }
@@ -101,7 +101,8 @@ export default function Game() {
     return result;
   }
 
-  const generate = async () => {
+  const generate = async (e) => {
+    e.preventDefault(); 
     setGenerating(true);
     const blob = await query(aiPrompt);
     const url = URL.createObjectURL(blob);
@@ -115,7 +116,7 @@ export default function Game() {
   <NavBar />
    <div className="flex flex-col items-center justify-center w-full z-10 " style={{ height: 'calc(100% - 74px)' }}>
     <div className="flex flex-col items-center justify-center min-h-[80%] min-w-[80%] w-[80%] h-[80%] bg-[#370C59] rounded-lg p-5 space-y-3 border-[3px] border-gray-200">
-      <h1 className="font-customs text-[50px] text-shadow-custom text-[#8dfcbc]">Make Store Come True</h1>
+      <h1 className="font-customs text-[50px] text-shadow-custom text-[#8dfcbc]">Make Story Come True</h1>
       <h1 className="text-shadow-md text-xl text-yellow-300">Prompt: {receivedPrompt!}</h1>
       {/* Ensure Image component fills the container or consider a wrapper */}
       <div className="border-[5px] border-black rounded-xl w-[500px] h-[500px]">
@@ -126,7 +127,7 @@ export default function Game() {
     <div className="w-[80%] flex space-x-5">
       <Input className={inputStyle} value={aiPrompt} onChange={(e) => {setAIPrompt(e.currentTarget.value)}}/>
       <Button className={buttonStyle} onClick={generate} disabled={generating}>Generate</Button>
-      <Button className={buttonStyle} onClick={() => submitImage(aiImage!)}>Submit</Button>
+      <Button className={buttonStyle} onClick={(e) => { e.preventDefault(); submitImage(aiImage!)}}>Submit</Button>
     </div>
     </div>
   </div>

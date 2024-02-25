@@ -47,6 +47,13 @@ io.on('connect', (socket) => {
         }
 
         delete players[player.publicKey];
+        delete socketIdToPublicKey[socket.id];
+        delete leaderBoard[player.publicKey];
+        if (player.isHost) {
+            gameStarted = false;
+            prompt = "";
+            images = {};
+        }
         console.log(`User ${socket.id} disconnected. Total players: ${Object.keys(players).length}`);
         console.log(players);
         io.emit('updatePlayers', Object.values(players));
@@ -103,7 +110,7 @@ io.on('connect', (socket) => {
             image: best,
         }
         const exploreUrl = await mint(publicKey, data)
-        socket.emit('bestImage', playerId, exploreUrl);
+        io.emit('bestImage', playerId, exploreUrl);
         console.log(`User ${socket.id} liked ${playerId}`);
     })
 
