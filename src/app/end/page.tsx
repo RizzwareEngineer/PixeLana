@@ -6,8 +6,18 @@ import Image from "next/image";
 import { User } from "@/components/waitRoom";
 import { useSocketAuth } from "@/contexts/SocketAuthContext";
 import { Avatar } from "@radix-ui/react-avatar";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface Content {
   type: "image" | "story";
@@ -19,11 +29,12 @@ const columnStyle="";
 
 export default function EngPage() {
 
-  const {socket, socketId} = useSocketAuth();
+  const {socket, socketId} = useSocketAuth()
+  const router = useRouter();
   const resultRef = useRef<HTMLDivElement>(null);
   const [submitted, setSubmitted] = useState(false);
 
-  const [content, setContent] = useState<Content[] | null>([
+  const [content, setContent] = useState<Content[]>([
     // {
     //   type: "story",
     //   data: "A Hugging Face Model",
@@ -59,6 +70,11 @@ export default function EngPage() {
     // },
   ]);
 
+  const onBackRoom = () => {
+    socket?.emit('backRoom')
+    
+  }
+
   const onLike = (publicKey: string, playerId: string, ) => {
     socket?.emit("like", publicKey, playerId);
     setSubmitted(true);
@@ -76,8 +92,10 @@ export default function EngPage() {
         toast.success(' The best image come from: ' + playerId + ' and the url is: ' + exploreUrl);
       })
 
+      socket.on('goBackRoom', () => {
+        router.push('/waiting')
+      })
     }
-
   }, [socket])
 
   useEffect(() => {
@@ -87,7 +105,12 @@ export default function EngPage() {
     }
 
   }, [content])
-
+  const notHost = useMemo(() => {
+    if (content?.length > 0) {
+      return content![0].user?.socketId !== socket?.id
+    } 
+    return false
+    }, [content, socket?.id])
 
   return (
   <main className="flex min-h-screen flex-col items-center justify-center p-24">
@@ -107,7 +130,7 @@ export default function EngPage() {
                   </Avatar>
                   <div>{c.user.name}</div>
                 </div>
-                <button className="items-center justify-center disabled:opacity-50" onClick={() => onLike(c.user.publicKey, c.user.socketId )} disabled={content![0].user?.socketId !== socket?.id}>
+                <button className="items-center justify-center disabled:opacity-50" onClick={() => onLike(c.user.publicKey, c.user.socketId )} disabled={notHost}>
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height={30} width={30}><defs><filter id="shadow-1" height="300%" width="300%" x="-100%" y="-100%"><feFlood flood-color="rgba(10, 251, 251, 1)" result="flood"/><feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"/><feGaussianBlur in="composite" stdDeviation="15" result="blur"/><feOffset dx="0" dy="0" result="offset"/><feComposite in="SourceGraphic" in2="offset" operator="over"/></filter></defs><g transform="translate(0,0)"><path d="M480.25 156.355c0 161.24-224.25 324.43-224.25 324.43S31.75 317.595 31.75 156.355c0-91.41 70.63-125.13 107.77-125.13 77.65 0 116.48 65.72 116.48 65.72s38.83-65.73 116.48-65.73c37.14.01 107.77 33.72 107.77 125.14z" fill="#f9352a" stroke="#19191a" stroke-opacity="1" stroke-width="43" fill-opacity="1" filter="url(#shadow-1)"/></g></svg>
                 </button>
               </div>
@@ -117,7 +140,7 @@ export default function EngPage() {
         {/* <div>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="138" height="138"><g transform="translate(0,0)" ><path d="M387.02 278.627v67.883L477.53 256l-90.51-90.51v67.883H124.98V165.49L34.47 256l90.51 90.51v-67.883h262.04z" fill="#f5ec24" fill-opacity="1" stroke="#fffffb" stroke-opacity="1" stroke-width="20"/></g></svg>
         </div> */}
-        <div ref={resultRef} className="flex flex-col bg-white h-[648px] border-[5px] border-emerald-400 rounded-xl overflow-y-scroll">
+        <div ref={resultRef} className="flex flex-col bg-white h-[648px] border-[5px] border-emerald-400 rounded-xl overflow-y-scroll relative">
           {content && content.map((c) => (
             <div className="flex space-y-4 px-4 py-2" key={c.user.socketId}>
               <span className="">{c.user.name}</span>
@@ -131,6 +154,16 @@ export default function EngPage() {
             </div>
             </div>
           ))}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className={cn("hidden absolute bottom-2 right-2 rounded-xl italic ring-[5px] ring-orange-600 hover:bg-[#f7d726] bg-primary text-shadow-md px-1", !notHost && "flex")}>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width={40} height={40}><g transform="translate(0,0)" ><path d="M105 41v398h302V41H105zm55 174c18.1 0 33 14.9 33 33s-14.9 33-33 33-33-14.9-33-33 14.9-33 33-33zm0 18c-8.4 0-15 6.6-15 15s6.6 15 15 15 15-6.6 15-15-6.6-15-15-15zM73 457v30h366v-30H73z" fill="#000000" fill-opacity="1"/></g></svg>
+                </TooltipTrigger>
+              <TooltipContent>
+                <p>Go Back to Room</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div> 
       </div>
     </div>
@@ -138,3 +171,4 @@ export default function EngPage() {
   )
 
 }
+

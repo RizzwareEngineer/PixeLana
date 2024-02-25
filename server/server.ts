@@ -15,6 +15,7 @@ let players: Record<string, Player> = {}; // publicKey: Player
 let socketIdToPublicKey: Record<string, string> = {}; // socketId: publicKey
 let prompt: string; // Prompt from host/judge to be drawn
 let images: Record<string, string> = {}; // Images submitted by players
+let leaderBoard: Record<string, number> = {}; // Leaderboard of likes
 let gameStarted = false;
 
 // Player connects
@@ -29,9 +30,11 @@ io.on('connect', (socket) => {
         let player = { socketId: socket.id, name, avatar, isHost, publicKey };
         players[publicKey] = player;
         socketIdToPublicKey[socket.id] = publicKey;
+        leaderBoard[publicKey] = 0;
         
         console.log(`User ${socket.id} connected. Total players: ${Object.keys(players).length}`);
         io.emit('updatePlayers', Object.values(players));
+        io.emit('updateLeaderBoard', Object.entries(leaderBoard).sort((a, b) => b[1] - a[1]));
     });
 
 
@@ -53,6 +56,7 @@ io.on('connect', (socket) => {
     // Provide current list players to the new player
     socket.on('getPlayers', () => {
         socket.emit('updatePlayers', Object.values(players));
+        io.emit('updateLeaderBoard', Object.entries(leaderBoard).sort((a, b) => b[1] - a[1]));
         console.log(`User ${socket.id} requested players.`);
     });
 
@@ -94,12 +98,20 @@ io.on('connect', (socket) => {
 
     socket.on('like', async (publicKey, playerId) => {
         const best = images[publicKey];
+        leaderBoard[publicKey] = leaderBoard[publicKey] + 1;
         const data = {
             image: best,
         }
         const exploreUrl = await mint(publicKey, data)
         socket.emit('bestImage', playerId, exploreUrl);
         console.log(`User ${socket.id} liked ${playerId}`);
+    })
+
+    socket.on('backRoom', () => {
+        gameStarted = false;
+        prompt = "";
+        images = {};
+        io.emit('goBackRoom');
     })
 });
 
