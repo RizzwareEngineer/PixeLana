@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { revalidatePath } from "next/cache";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 function FinishDialog({open}: {open: boolean}) {
   return (
@@ -30,6 +31,7 @@ const inputStyle ="flex-1 border ring-orange-600 ring-[5px] rounded-lg focus-vis
 
 export default function Game() {
 
+  const router = useRouter();
   const {socket} = useSocketAuth();
   // received content, either image or story
   const [receivedPrompt, setPrompt] = useState<string | null>(null);
@@ -45,7 +47,7 @@ export default function Game() {
 
 
   const submitImage = (image: string) => {
-    // socket?.emit('image', socket.id, image);
+    socket?.emit('submitDraw', socket.id, image);
     setSubmitted(true);
   }
 
@@ -68,8 +70,13 @@ export default function Game() {
 
   useEffect(() => { 
     if(socket) {
+      socket.emit('getPrompt');
       socket.on('prompt', (prompt: string) => {
         setPrompt(prompt);
+      });
+
+      socket.on('allImagesSubmitted', () => {
+        router.push('/end');
       })
     }
   }, [socket])

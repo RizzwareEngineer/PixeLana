@@ -1,10 +1,9 @@
 // models/player.ts
 
 export type Player = {
-    id: string;
+    socketId: string;
     name: string;
     avatar: string;
     isHost: boolean;
-    order: number;
     publicKey: string;
   };

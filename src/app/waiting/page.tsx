@@ -88,7 +88,7 @@ export default function WaitRoom() {
       {"Let's Go!"}
       </Button>
       </div>
-      <WaitDialog open={true}/>
+      <WaitDialog open={dialogOpen}/>
     </main>
   )
 }

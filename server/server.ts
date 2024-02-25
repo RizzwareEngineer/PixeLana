@@ -1,7 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { createServer } from 'http';
 import { Player } from './models/player';
-import { Prompt } from './models/prompt';
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
@@ -12,31 +11,30 @@ const io = new Server(httpServer, {
 });
 
 let players: Record<string, Player> = {}; // publicKey: Player
-let order = 0; // Keep track of the number of players
-let startingPrompts: Prompt[] = [];
+let prompt: string; // Prompt from host/judge to be drawn
+let images: Record<string, string> = {}; // Images submitted by players
 let gameStarted = false;
 
 // Player connects
 io.on('connect', (socket) => {
     // Add player to memory when they connect to lobby
-    socket.on('addPlayer', (name, avatar, isHost, publicKey) => {
+    socket.on('addPlayer', (name, avatar, publicKey) => {
         if (players[publicKey]) {
             socket.emit('addPlayerError', `Public key ${publicKey} is already in use.`);
             return;
         }
-        
-        let player = { id: socket.id, name, avatar, isHost, order, publicKey };
+        const isHost = Object.keys(players).length == 0; 
+        let player = { socketId: socket.id, name, avatar, isHost, publicKey };
         players[publicKey] = player;
-        order++;
         
-        console.log(`User ${socket.id} connected. Total players: ${Object.keys(players).length}, Order: ${order}`);
+        console.log(`User ${socket.id} connected. Total players: ${Object.keys(players).length}`);
         io.emit('updatePlayers', Object.values(players));
     });
 
 
     // Player disconnects
     socket.on('disconnect', () => {
-        let player = Object.values(players).find(player => player.id === socket.id);
+        let player = Object.values(players).find(player => player.socketId === socket.id);
         if (!player) {
             console.log(`User ${socket.id} not found.`);
             return;
@@ -58,41 +56,43 @@ io.on('connect', (socket) => {
     // Listen for host starting the game
     socket.on('startGame', () => {
         gameStarted = true;
-        io.emit('gameStart');
-
-        // Start a timer for 60 seconds
-        setTimeout(() => {
-            // If not all players have submitted their prompts when the timer runs out,
-            // submit an empty prompt for them and move on to the next stage of the game
-            if (startingPrompts.length !== Object.keys(players).length) {
-                for (let publicKey in players) {
-                    if (!startingPrompts.find(prompt => prompt.player.publicKey === publicKey)) {
-                        let prompt: Prompt = { player: players[publicKey], text: '' };
-                        startingPrompts.push(prompt);
-                    }
-                }
-
-                io.emit('gameDraw');
-            }
-        }, 60000); // 60 seconds
+        const x = Object.values(players).filter(player => !player.isHost).map((player) => player.socketId);
+        io.to(x).emit('hostStarted');
     });  
 
+    socket.on('getPrompt', () => {
+        socket.emit('prompt', prompt);
+    })
     
     // Listen for player submitting their prompt's text
     socket.on('submitPrompt', (publicKey, promptText) => {
-        let player = players[publicKey];
-        let prompt: Prompt = { player, text: promptText };
-        startingPrompts.push(prompt);
-    
-        console.log(`User ${socket.id} submitted prompt: ${promptText}`);
+        prompt = promptText;
 
-        // Check if all players have submitted their prompts
-        if (startingPrompts.length === Object.keys(players).length) {
-            // Move onto drawing the prompts
-            io.emit('gameDraw');
-        }
+        const x = Object.values(players).filter(player => !player.isHost).map((player) => player.socketId)
+        io.to(x).emit('hostFinished');
+        console.log(`User ${socket.id} submitted prompt: ${promptText}`);
     });
+    
+    socket.on('submitDraw', (socketId, image) => {
+        images[socketId] = image;
+        console.log(`User ${socket.id} submitted image: ${image}`);
+        if (Object.keys(images).length === Object.keys(players).length - 1) {
+            io.emit('allImagesSubmitted');
+        }
+    })
+
+    socket.on('getAllContent', () => {
+        const allContent = [{type: "story", data: prompt, user: players[Object.keys(players)[0]]}, ...Object.entries(images).map(([socketId, image]) => {
+            return {type: "image", data: image, user: players[socketId]}
+        })];
+        io.emit('allContent', allContent);
+    })
+
+    socket.on('like', (playerId) => {
+        
+        console.log(`User ${socket.id} liked ${playerId}`);
+    })
 });
 
 const PORT = process.env.PORT || 3001;
-httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`)); 

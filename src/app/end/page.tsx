@@ -7,6 +7,7 @@ import { User } from "@/components/waitRoom";
 import { useSocketAuth } from "@/contexts/SocketAuthContext";
 import { Avatar } from "@radix-ui/react-avatar";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 interface Content {
   type: "image" | "story";
@@ -27,7 +28,7 @@ export default function EngPage() {
       type: "story",
       data: "A Hugging Face Model",
       user: {
-        id: "9",
+        socketId: "9",
         name: "User 0",
         avatar: "https://picsum.photos/200/300",
         isHost: true,
@@ -38,7 +39,7 @@ export default function EngPage() {
       type: "image",
       data: "https://picsum.photos/200/300",
       user: {
-        id: "8",
+        socketId: "8",
         name: "User 1",
         avatar: "https://picsum.photos/200/300",
         isHost: false,
@@ -49,7 +50,7 @@ export default function EngPage() {
       type: "image",
       data: "https://picsum.photos/200/300",
       user: {
-        id: "1",
+        socketId: "1",
         name: "User 2",
         avatar: "https://picsum.photos/200/300",
         isHost: false,
@@ -65,7 +66,14 @@ export default function EngPage() {
 
   useEffect(() => {
     if (socket) {
+      socket.emit("getAllContent");
+      socket.on("allContent", (content: Content[]) => {
+        setContent(content);
+      })
 
+      socket.on('bestImage', (playerId: string) => {
+        toast.success(' The best image come from: ' + playerId);
+      })
     }
 
   }, [socket])
@@ -90,14 +98,14 @@ export default function EngPage() {
           </div>
           <div className="flex flex-col bg-white border-[5px] border-emerald-400 rounded-xl h-full overflow-y-scroll">
             {content && content.filter((c) => c.type === "image").map((c) => (
-              <div key={c.user.id} className="flex items-center justify-between rounded-xl border-[5px] border-black px-3 py-2 m-2">
+              <div key={c.user.socketId} className="flex items-center justify-between rounded-xl border-[5px] border-black px-3 py-2 m-2">
                 <div className="flex flex-row items-center justify-center">
                   <Avatar className="rounded-lg w-[48px] h-[48px] overflow-hidden">
                     <AvatarImage src={c.user.avatar} alt={c.user.name}/>
                   </Avatar>
                   <div>{c.user.name}</div>
                 </div>
-                <div className="items-center justify-center disabled:opacity-50" onClick={() => onLike(c.user.id)}>
+                <div className="items-center justify-center disabled:opacity-50" onClick={() => onLike(c.user.socketId)}>
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height={30} width={30}><defs><filter id="shadow-1" height="300%" width="300%" x="-100%" y="-100%"><feFlood flood-color="rgba(10, 251, 251, 1)" result="flood"/><feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"/><feGaussianBlur in="composite" stdDeviation="15" result="blur"/><feOffset dx="0" dy="0" result="offset"/><feComposite in="SourceGraphic" in2="offset" operator="over"/></filter></defs><g transform="translate(0,0)"><path d="M480.25 156.355c0 161.24-224.25 324.43-224.25 324.43S31.75 317.595 31.75 156.355c0-91.41 70.63-125.13 107.77-125.13 77.65 0 116.48 65.72 116.48 65.72s38.83-65.73 116.48-65.73c37.14.01 107.77 33.72 107.77 125.14z" fill="#f9352a" stroke="#19191a" stroke-opacity="1" stroke-width="43" fill-opacity="1" filter="url(#shadow-1)"/></g></svg>
                 </div>
               </div>
@@ -109,7 +117,7 @@ export default function EngPage() {
         </div> */}
         <div ref={resultRef} className="flex flex-col bg-white h-[648px] border-[5px] border-emerald-400 rounded-xl overflow-y-scroll">
           {content && content.map((c) => (
-            <div className="flex space-y-4 px-4 py-2" key={c.user.id}>
+            <div className="flex space-y-4 px-4 py-2" key={c.user.socketId}>
               <span className="">{c.user.name}</span>
               <div className="flex border-[3px] border-black px-2 py-3 rounded-xl overflow-hidden">
               {c.type === "image" ? (

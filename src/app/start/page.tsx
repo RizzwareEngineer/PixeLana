@@ -45,7 +45,7 @@ export default function Game() {
     if (socket) {
       // Redirect users to the next page when 
       // all players have submitted their prompts or when the time has run out
-      socket.on('playerFinished', () => {
+      socket.on('allImagesSubmitted', () => {
         router.push('/end');
       })
     }
