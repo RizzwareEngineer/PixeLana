@@ -3,15 +3,33 @@ import NavBar from "@/components/navBar";
 import { Button } from "@/components/ui/button";
 import { Room, type User } from "@/components/waitRoom";
 import { useSocketAuth } from "@/contexts/SocketAuthContext";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 
+function WaitDialog({open}: {open: boolean}) {
+  return (
+  <Dialog open={open}>
+    <DialogContent className="bg-secondary">
+      <DialogHeader>
+        <DialogTitle className="font-sans text-white">Wait for the Host to finish the story</DialogTitle>
+        <DialogDescription className="font-sans text-white">
+          {"Hold on! The story is coming!"}
+        </DialogDescription>
+      </DialogHeader>
+    </DialogContent>
+  </Dialog>
+  )
+}
+
+
 export default function WaitRoom() {
 
   const [users, setUsers] = useState<User[]>([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
   const wallet = useWallet();
   const {socket, socketId} = useSocketAuth();
@@ -28,8 +46,12 @@ export default function WaitRoom() {
         setUsers(players);
       });
 
-      socket.on('gameStart', (error) => {
-        router.push('/start');
+      socket.on('hostStarted', () => {
+        setDialogOpen(true)
+      })
+
+      socket.on('hostFinished', (error) => {
+        router.push('/draw');
       });
     }
     return () => {
@@ -49,7 +71,8 @@ export default function WaitRoom() {
 
   const onStart = () => {
     if (socket) {
-      socket.emit('startGame');
+      socket.emit('startGame'); // than other users would have their dialog opened
+      router.push('/start')
     }
   }
 
@@ -65,6 +88,7 @@ export default function WaitRoom() {
       {"Let's Go!"}
       </Button>
       </div>
+      <WaitDialog open={true}/>
     </main>
   )
 }

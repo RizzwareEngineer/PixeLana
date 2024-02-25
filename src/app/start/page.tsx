@@ -18,9 +18,9 @@ function FinishDialog({open, hasTime}: {open: boolean, hasTime: boolean}) {
   <Dialog open={open}>
     <DialogContent className="bg-secondary">
       <DialogHeader>
-        <DialogTitle className="font-sans text-white">{hasTime ? "Waiting for other users to finish" : "Time limit!"}</DialogTitle>
+        <DialogTitle className="font-sans text-white">Waiting for players to make the story come true</DialogTitle>
         <DialogDescription className="font-sans text-white">
-          {hasTime ? "Please wait for the other users to finish their turn!" : "Time is up! Story Submitted!"}
+          Calm down! The story is coming!
         </DialogDescription>
       </DialogHeader>
     </DialogContent>
@@ -45,8 +45,8 @@ export default function Game() {
     if (socket) {
       // Redirect users to the next page when 
       // all players have submitted their prompts or when the time has run out
-      socket.on('gameDraw', () => {
-        router.push('/game');
+      socket.on('playerFinished', () => {
+        router.push('/end');
       })
     }
   })
