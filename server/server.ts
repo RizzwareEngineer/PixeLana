@@ -92,12 +92,12 @@ io.on('connect', (socket) => {
         io.emit('allContent', allContent);
     })
 
-    socket.on('like', (publicKey, playerId) => {
-        const best = images[playerId];
+    socket.on('like', async (publicKey, playerId) => {
+        const best = images[publicKey];
         const data = {
             image: best,
         }
-        const exploreUrl = mint(publicKey, data)
+        const exploreUrl = await mint(publicKey, data)
         socket.emit('bestImage', playerId, exploreUrl);
         console.log(`User ${socket.id} liked ${playerId}`);
     })

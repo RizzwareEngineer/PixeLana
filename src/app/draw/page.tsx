@@ -1,6 +1,7 @@
 'use client';
 import { useSocketAuth } from "@/contexts/SocketAuthContext";
 import { useEffect, useState } from "react";
+import { unstable_noStore as noStore } from 'next/cache'
 import {Timer} from "@/components/timer";
 import Image from "next/image";
 import NavBar from "@/components/navBar";
@@ -35,6 +36,7 @@ const inputStyle ="flex-1 border ring-orange-600 ring-[5px] rounded-lg focus-vis
 export default function Game() {
 
   const router = useRouter();
+  noStore();
   const {socket} = useSocketAuth();
   const wallet = useWallet();
   // received content, either image or story
@@ -86,11 +88,11 @@ export default function Game() {
 
 
   async function query(prompt: string) {
-    console.log(process.env.NEXT_SDXL_API_KEY)
+    // console.log(process.env.NEXT_SDXL_API_KEY)
     const response = await fetch(
       "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
       {
-        headers: { Authorization: process.env.NEXT_SDXL_API_KEY || "" },
+        headers: { Authorization: process.env.SDXL_API_KEY || "" },
         method: "POST",
         body: JSON.stringify({ inputs: prompt }),
       }
@@ -113,7 +115,7 @@ export default function Game() {
   <NavBar />
    <div className="flex flex-col items-center justify-center w-full z-10 " style={{ height: 'calc(100% - 74px)' }}>
     <div className="flex flex-col items-center justify-center min-h-[80%] min-w-[80%] w-[80%] h-[80%] bg-[#370C59] rounded-lg p-5 space-y-3 border-[3px] border-gray-200">
-      <h1 className="font-sans font-customs text-[50px] text-shadow-custom text-[#8dfcbc]">Make Store Come True</h1>
+      <h1 className="font-customs text-[50px] text-shadow-custom text-[#8dfcbc]">Make Store Come True</h1>
       <h1 className="text-shadow-md text-xl text-yellow-300">Prompt: {receivedPrompt!}</h1>
       {/* Ensure Image component fills the container or consider a wrapper */}
       <div className="border-[5px] border-black rounded-xl w-[500px] h-[500px]">

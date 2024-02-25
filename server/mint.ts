@@ -178,7 +178,7 @@ async function mintAndRewardNFT(
     TOKEN_2022_PROGRAM_ID,
   );
   console.log(`https://solana.fm/tx/${mintSig}?cluster=devnet-alpha`);
-  return "https://solana.fm/tx/${mintSig}?cluster=devnet-alpha";
+  return `https://solana.fm/tx/${mintSig}?cluster=devnet-alpha`;
 }
 
 
