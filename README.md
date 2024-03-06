@@ -3,11 +3,19 @@ PixeLana is a multiplayer web app game where Stable Diffusion meets the Solana B
 
 Winners will have their art minted in memory and as an NFT on the Solana Blockchain with fast confirmation times and low transaction fees.
 
+Fortunately, PixeLana was awarded a 1st place finish at [HackIllinois 2024](https://hackillinois-2024.devpost.com/)!
+
+> [!NOTE]
+> This repository is the final version of our PixeLana submitted to [HackIllinois 2024](https://hackillinois-2024.devpost.com/). 
+
 ## What's Next?
-PixeLana was originally a project submission to [HackIllinois 2024](https://hackillinois-2024.devpost.com/) (where PixeLana was awarded a [1st place finish](https://hackillinois-2024.devpost.com/project-gallery)) and will be revamped for [Renaissance](https://www.colosseum.org/renaissance), a global online hackathon hosted by the Solana Foundation!
+PixeLana will be revamped for [Renaissance](https://www.colosseum.org/renaissance), a global online hackathon hosted by the Solana Foundation! 
+
+> [!NOTE]  
+> Our production repository for Renaissance is currently private. We will publicize our work some time on or after March 11, 2024 to protect ourselves of plagiarism. 
 
 ## Try it Out!
-We are working fast to deploy our application! For eager players that would like to try the game **on the same network**:
+We are working fast to deploy our application! We'll announce ASAP when PixeLana is available world-wide via [LinkedIn](https://www.linkedin.com/in/davidcodylingan/). For eager players that would like to try the game **on the same network**:
 
 1. Open a terminal
 ```
